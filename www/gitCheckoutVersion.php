@@ -18,51 +18,37 @@ if (!$wrapped) {
 ?>
 <head>
 <title>
-Rebuild FPP
+Checkout specific Git version
 </title>
 </head>
 <body>
-<h2>Rebuild FPP</h2>
+<h2>Checkout specific Git version</h2>
+Version: <? echo $_GET['version']; ?><br>
 <pre>
 <?
-}
-?>
-Stopping fppd...
-<?php
-if (file_exists("/.dockerenv")) {
-    system($SUDO . " $fppDir/scripts/fppd_stop");
 } else {
-    exec($SUDO . " systemctl stop fppd");
+    echo "Checkout specific Git version\n";
+    echo "Version: " . $_GET['version'] . "\n";
 }
 
-touch("$mediaDirectory/tmp/fppd_restarted");
 ?>
 ==========================================================================
-Rebuilding FPP...
+Switching versions:
 <?
-system($SUDO . " $fppDir/scripts/fpp_build");
+system($SUDO . " $fppDir/scripts/git_checkout_version " . $_GET['version']);
 ?>
 ==========================================================================
-Restarting fppd...
-<?
-if (file_exists("/.dockerenv")) {
-    system($SUDO . " $fppDir/scripts/fppd_start");
-} else {
-    exec($SUDO . " systemctl restart fppd");
-}
-exec($SUDO . " rm -f /tmp/cache_*.cache");
-?>
-==========================================================================
-Rebuild Complete.
 <?
 if (!$wrapped) {
 ?>
+</pre>
+Switch complete, you may need to reload the page for changes to be visible.<br>
 <a href='index.php'>Go to FPP Main Status Page</a><br>
 <a href='about.php'>Go back to FPP About page</a><br>
-
 </body>
 </html>
 <?
+} else {
+    echo "Switch complete, you may need to reload the page for changes to be visible.\n";
 }
 ?>
-

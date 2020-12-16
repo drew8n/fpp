@@ -20,29 +20,31 @@ $(document).ready(function() {
 		$(this).select();
 	});
 
-	$('#tblUniversesBody').sortable({
-		start: function (event, ui) {
-			start_pos = ui.item.index();
-		},
-		update: function(event, ui) {
-			SetUniverseInputNames();
-		},
-		beforeStop: function (event, ui) {
-			//undo the firefox fix.
-			// Not sure what this is, but copied from playlists.php to here
-			if (navigator.userAgent.toLowerCase().match(/firefox/) && ui.offset !== undefined) {
-				$(window).unbind('scroll.sortableplaylist');
-				ui.helper.css('margin-top', 0);
-			}
-		},
-		helper: function (e, ui) {
-			ui.children().each(function () {
-				$(this).width($(this).width());
-			});
-			return ui;
-		},
-		scroll: true
-	}).disableSelection();
+    if (window.innerWidth > 600) {
+        $('#tblUniversesBody').sortable({
+            start: function (event, ui) {
+                start_pos = ui.item.index();
+            },
+            update: function(event, ui) {
+                SetUniverseInputNames();
+            },
+            beforeStop: function (event, ui) {
+                //undo the firefox fix.
+                // Not sure what this is, but copied from playlists.php to here
+                if (navigator.userAgent.toLowerCase().match(/firefox/) && ui.offset !== undefined) {
+                    $(window).unbind('scroll.sortableplaylist');
+                    ui.helper.css('margin-top', 0);
+                }
+            },
+            helper: function (e, ui) {
+                ui.children().each(function () {
+                    $(this).width($(this).width());
+                });
+                return ui;
+            },
+            scroll: true
+        }).disableSelection();
+    }
 
 	$('#tblUniversesBody').on('mousedown', 'tr', function(event,ui){
 		$('#tblUniversesBody tr').removeClass('selectedEntry');
@@ -109,7 +111,7 @@ function PopulateInterfaces()
 			<div id='divE131Data'>
 
 				<div style="overflow: hidden; padding: 10px;">
-					<b>Enable E1.31 / ArtNet / DDP Output:</b> <input type="checkbox" id="E131Enabled"/><br><br>
+					<b>Enable E1.31 / ArtNet / DDP Output:</b> <input type="checkbox" id="E131Enabled"/><span id='outputOffWarning' style='display: none;' class='warning'> - WARNING, universe outputs are active, but the primary channel output is disabled.  No data will be sent.</span><br><br>
 					Source Interface: <select id="selE131interfaces"><? PopulateInterfaces(); ?></select>
     <span
     <? if ($uiLevel < 1) { ?>
