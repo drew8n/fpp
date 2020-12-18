@@ -22,7 +22,6 @@ $command_array = Array(
 	"getChannelOutputs"   => 'GetChannelOutputs',
 	"setChannelOutputs"   => 'SetChannelOutputs',
 	"setUniverses"        => 'SetUniverses',
-	"applyDNSInfo"        => 'ApplyDNSInfo',
 	"getDNSInfo"          => 'GetDNSInfo',
 	"setDNSInfo"          => 'SetDNSInfo',
 	"getFPPDUptime"       => 'GetFPPDUptime',
@@ -309,7 +308,7 @@ function GetFPPStatusJson()
                 curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
                 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($curl, CURLOPT_CONNECTTIMEOUT_MS, 500);
-                curl_setopt($curl, CURLOPT_TIMEOUT_MS, 2000);
+                curl_setopt($curl, CURLOPT_TIMEOUT_MS, 3000);
                 $curls[$ip] = $curl;
                 curl_multi_add_handle($curlmulti, $curl);
             }
@@ -1170,12 +1169,6 @@ function SetInterfaceInfo()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-function ApplyDNSInfo()
-{
-	global $settings, $SUDO;
-
-	exec($SUDO . " " . $settings['fppDir'] . "/scripts/config_dns");
-}
 
 function GetDNSInfo()
 {

@@ -336,9 +336,6 @@ int Playlist::Load(const char *filename)
 
 	int res = Load(root);
 
-    if (m_random > 0)
-        RandomizeMainPlaylist();
-
 	GetConfigStr();
 
 	return res;
@@ -925,21 +922,27 @@ void Playlist::SetIdle(bool exit)
 	//Cleanup();
 
     PluginManager::INSTANCE.playlistCallback(GetInfo(), "stop", m_currentSectionStr, m_sectionPosition);
-	if (mqtt) {
-		mqtt->Publish("status", "idle");
-		mqtt->Publish("playlist/name/status", "");
-		mqtt->Publish("playlist/section/status", "");
-		mqtt->Publish("playlist/sectionPosition/status", 0);
-		mqtt->Publish("playlist/repeat/status", 0);
-	}
+
+    bool publishIdle = true;
     if (m_parent && exit) {
         playlist = m_parent;
         if (m_parent->getPlaylistStatus() == FPP_STATUS_PLAYLIST_PAUSED) {
             m_parent->Resume();
         }
         PL_CLEANUPS.push_back(this);
+
+        if (m_parent->getPlaylistStatus() != FPP_STATUS_IDLE)
+            publishIdle = false;
     } else if (exit) {
         sequence->SendBlankingData();
+    }
+
+    if (publishIdle && mqtt) {
+        mqtt->Publish("status", "idle");
+        mqtt->Publish("playlist/name/status", "");
+        mqtt->Publish("playlist/section/status", "");
+        mqtt->Publish("playlist/sectionPosition/status", 0);
+        mqtt->Publish("playlist/repeat/status", 0);
     }
 }
 
@@ -1051,7 +1054,7 @@ int Playlist::Play(const char *filename, const int position, const int repeat, c
 
 	Load(filename);
 
-    if (m_random > 0)
+    if ((position == 0) && (m_random > 0))
         RandomizeMainPlaylist();
 
     int p = position;

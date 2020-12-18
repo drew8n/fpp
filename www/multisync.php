@@ -60,6 +60,16 @@ input.largeCheckbox {
 				remotes += $(this).attr("name");
 			}
 		});
+
+        var multicastChecked = $('#MultiSyncMulticast').is(":checked");
+        var broadcastChecked = $('#MultiSyncBroadcast').is(":checked");
+
+        if ((remotes == '') &&
+            (!$('#MultiSyncMulticast').is(":checked")) &&
+            (!$('#MultiSyncBroadcast').is(":checked"))) {
+            $('#MultiSyncMulticast').prop('checked', true);
+            alert('FPP will use multicast if no other sync methods are chosen.  To disable sync entirely, switch FPP to standalone player mode instead of Master mode.');
+        }
         
 		$.get("fppjson.php?command=setSetting&key=MultiSyncRemotes&value=" + remotes
 		).done(function() {
@@ -287,6 +297,13 @@ input.largeCheckbox {
                 return;
 	    }
 
+        if (status != "") {
+            $('#' + rowID + '_status').html(status);
+        }
+
+        if (status == 'unreachable')
+            return;
+
         $('#' + rowID + '_mode').html(modeToString(data.mode));
 
 	    if (data.hasOwnProperty('wifi')) {
@@ -308,9 +325,6 @@ input.largeCheckbox {
             if ($('#' + rowID).attr('ip') != ip)
                 $('#' + rowID).attr('ip', ip);
 
-            if (status != "") {
-                $('#' + rowID + '_status').html(status);
-            }
 			$('#' + rowID + '_elapsed').html(elapsed);
                
             if (data.warnings != null && data.warnings.length > 0) {
@@ -421,7 +435,8 @@ input.largeCheckbox {
             }
             });
 
-            $('#fppSystems').trigger('update', true);
+            if ($('.logRow:visible').length == 0)
+                $('#fppSystems').trigger('update', true);
 		}).always(function() {
 			if (Array.isArray(ipAddresses) && $('#MultiSyncRefreshStatus').is(":checked")) {
 				refreshTimer = setTimeout(function() {getFPPSystemStatus(ipAddresses, true);}, <? if ($advancedView) echo '2000'; else echo '1000'; ?>);
@@ -631,7 +646,6 @@ if ($uiLevel >= 1) {
 ?>
 
         $('#fppSystems').trigger('update', true);
-        $("#fppSystemsTable").find("th:contains(Hostname)").trigger("sort");
 	}
 
     var systemsList = [];
@@ -822,6 +836,18 @@ function syncModeUpdated(setting = '') {
     } else if (setting == 'MultiSyncBroadcast') {
         if (multicastChecked && broadcastChecked)
             $('#MultiSyncMulticast').prop('checked', false).trigger('change');
+    }
+
+    var anyUnicast = 0;
+    $('input.syncCheckbox').each(function() {
+        if ($(this).is(":checked")) {
+            anyUnicast = 1;
+        }
+    });
+
+    if (!anyUnicast && !multicastChecked && !broadcastChecked) {
+        $('#MultiSyncMulticast').prop('checked', true);
+        alert('FPP will use multicast if no other sync methods are chosen.  To disable sync entirely, switch FPP to standalone player mode instead of Master mode.');
     }
 }
 
@@ -1385,7 +1411,7 @@ $(document).ready(function() {
         widthFixed: false,
         theme: 'blue',
         cssInfoBlock: 'tablesorter-no-sort',
-        widgets: ['zebra', 'filter', 'staticRow'],
+        widgets: ['zebra', 'filter', 'staticRow', 'saveSort'],
         headers: {
             0: { sortInitialOrder: 'asc' },
             1: { extractor: 'FPPIPParser', sorter: 'ipAddress' }
