@@ -120,13 +120,6 @@
 	width: 100px;
 }
 
-#bodyWrapper
-{
-    width: 95%;
-	margin-left: auto;
-	margin-right: auto;
-	background: rgb(240, 240,240);
-}
 
 #playerstats
 {
@@ -913,11 +906,6 @@ fieldset
 }
 
 
-.title {
-	font-size: larger;
-	text-align: center;
-	font-weight: bold;
-}
 
 .helpLink {
 	text-decoration: none;

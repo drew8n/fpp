@@ -4,15 +4,21 @@
   </div>
 </div>
 
-<div id="footer">
+<div id="footer" style="text-align:center;">
 <br />
-  <div id="rebootShutdown">
-    <input name="btnReboot" onClick="RebootPi();" type="button" class = "buttons" value="Reboot">
-    <input name="btnShutdown" type="button" onClick="ShutdownPi();" class = "buttons" value="Shutdown">
-    <input name="btnRestartFPPD" type="button" onClick="ClearRestartFlag(); RestartFPPD();" class = "buttons" value="Restart FPPD">
+  <div id="rebootShutdown" class="btn-group" role="group" style="display:inline;">
+      <button id="btnReboot" class="btn btn-primary btn-sm" onClick="RebootPi();">Reboot
+      </button><button id="btnShutdown"  class="btn btn-primary btn-sm" onClick="ShutdownPi();">Shutdown
+      </button><button id="btnRestartFPPD" class="btn btn-primary btn-sm" onClick="ClearRestartFlag();RestartFPPD();">Restart FPPD
+      </button>
   </div>
 <br />
+
+</div>
+</div>
+
+<div style="text-align:center;">
+<br/>
 <a href="http://www.falconchristmas.com">www.falconchristmas.com</a>
-<br />
-<br />
+<br/><br/>
 </div>

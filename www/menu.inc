@@ -56,12 +56,17 @@ function list_plugin_entries($menu)
 }
 ?>
 
-  <div style='float: right'><a href='#' class='nonULLink' onClick='ClearRestartFlag(); ClearRebootFlag();'><img src='images/1x1.png' width='5' height='5' style="vertical-align: top;"></a></div>
-  <div class="header">
-    <div class="headerLeft"><a href="https://falconchristmas.com/forum/"><img src="images/falconlogo.png" class="logo" /></a></div>
-    <div class="headerCenter"><div class="siteName"><? echo $settings['Title']; ?></div>
-      Version: <a href='about.php' class='nonULLink headerLink'><?php echo $fpp_head_version; ?></a>&nbsp;&nbsp;<br class='headerBreak'>Host:&nbsp;
-<?
+<nav class="navbar navbar-transparent bg-dark navbar-color-on-scroll fixed-top navbar-expand-lg"
+        color-on-scroll="20" id="sectionsNav">
+        <div class="container">
+            <div class="navbar-translate d-flex">
+                <img src="falconlogoinverse.png" alt="" height="50" class="d-inline-block align-top" />
+                <span class="ml-3">
+                    <a class="navbar-brand navtitle" href="#">
+                        <? echo $settings['Title']; ?>
+                    </a><br />
+                    <small class="navsubtitle">Version: <a href='about.php' class='nonULLink headerLink'><?php echo $fpp_head_version; ?></a> &middot; 
+                    <br/>Host: <?
     if (!file_exists("/etc/fpp/desktop")) {
         echo "<a href='networkconfig.php' class='nonULLink headerLink'>" . $settings['HostName'] . "</a> " ;
     } else {
@@ -69,6 +74,110 @@ function list_plugin_entries($menu)
     }
 
     echo("(<span id=\"header_IPs\"></span>)");
+    ?></small>
+                </span>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="navbar-toggler-icon"></span>
+                    <span class="navbar-toggler-icon"></span>
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ml-auto">
+                    <li class="dropdown nav-item">
+                        <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+                            <!--<i class="material-icons">apps</i>--> Status/Control
+                        </a>
+                        <div class="dropdown-menu dropdown-with-icons">
+                            <a class="dropdown-item active" href="index.php">Status Page</a>
+                            <?
+if (!file_exists("/etc/fpp/desktop")) {
+          echo '<a class="dropdown-item active" href="networkconfig.php">Network</a>';
+}
+?>
+                            <a class="dropdown-item" href="multisync.php">Multi Sync</a>
+                            <a class="dropdown-item" href="settings.php">FPP Settings</a>
+                            <a class="dropdown-item" href="backup.php">FPP Backup</a>
+                            <a class="dropdown-item" href="proxies.php">Proxy Settings</a>
+                            <a class="dropdown-item" href="events.php">Events</a>
+                            <a class="dropdown-item" href="effects.php">Effects</a>
+                            <a class="dropdown-item" href="testing.php">Display Testing</a>
+                            <?
+          if (file_exists($settings['co-other'])) {
+            $js = json_decode(file_get_contents($settings['co-other']), true);
+            foreach($js["channelOutputs"] as $key => $val) {
+                if (($val["enabled"] == 1) && ($val["type"] == "HTTPVirtualDisplay")) {
+                echo "<a class='dropdown-item' href='virtualdisplaywrapper.php'>Virtual Display</a>";
+                }
+            }
+          
+          }
+          ?>
+          <div class="dropdown-divider"></div>
+          <?php list_plugin_entries("status"); ?>
+                        </div>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+                            Content Setup
+                        </a>
+                        <div class="dropdown-menu dropdown-with-icons">
+                            <a class="dropdown-item" href="uploadfile.php">File Manager</a>
+                            <a class="dropdown-item" href="playlists.php">Playlists</a>
+                            <a class="dropdown-item" href="scheduler.php">Scheduler</a>
+                            <a class="dropdown-item" href="scriptbrowser.php">Script Repository
+                                Browser</a>
+                            <a class="dropdown-item" href="plugins.php">Plugin Manager</a>
+                            <?php list_plugin_entries("content"); ?>
+                        </div>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+                            Input/Output Setup
+                        </a>
+                        <div class="dropdown-menu dropdown-with-icons">
+                            <a class="dropdown-item" href="channelinputs.php">
+                                Channel Inputs</a>
+                            <a class="dropdown-item" href="channeloutputs.php">Channel Outputs</a>
+                            <a class="dropdown-item" href="outputprocessors.php"><i class="fas fa-microchip"></i> Output Processors</a>
+                            <a class="dropdown-item" href="pixeloverlaymodels.php"><i class="fas fa-cubes"></i> Pixel Overlay Models</a>
+                            <a class="dropdown-item" href="gpio.php"><i class="fas fa-exchange-alt"></i> GPIO Inputs</a>
+                            <?php list_plugin_entries("output"); ?>
+                        </div>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+                            Help
+                        </a>
+                        <div class="dropdown-menu dropdown-with-icons">
+                            <a class="dropdown-item" href="https://falconchristmas.github.io/FPP_Manual(4.6).pdf">FPP Manual</a>
+                            <a class="dropdown-item" href="http://falconchristmas.com/wiki/index.php/Falcon_FPP">Wiki/Help</a>
+                            <? if ($settings['uiLevel'] > 0) { ?>
+          <a class="dropdown-item" href="apihelp.php">REST API Help</a>
+<? } ?>
+                            <a class="dropdown-item" href="cliHelp.php">fpp &amp; fppmm Usage</a>
+                            <a class="dropdown-item" href="troubleshooting.php">Troubleshooting Commands</a>
+                            <a class="dropdown-item" href="http://<?php echo $_SERVER['SERVER_ADDR'] ?>:4200" target="_new">SSH Shell</a>
+                            <a class="dropdown-item" href="about.php">About</a>
+                            <a class="dropdown-item" href="credits.php">Credits</a>
+                            <?php list_plugin_entries("help"); ?>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="page-header header-filter clear-filter black-filter" data-parallax="true"
+        style="background-image: url('bkgnd.jpg');">
+
+    </div>
+
+
+  <div style='float: right'><a href='#' class='nonULLink' onClick='ClearRestartFlag(); ClearRebootFlag();'><img src='images/1x1.png' width='5' height='5' style="vertical-align: top;"></a></div>
+
+<?php
 
 	if (file_exists("/etc/fpp/rfs_version") && exec('grep "^[^#].*/home/pi/media" /etc/fstab') )
 	{
@@ -104,102 +213,10 @@ function list_plugin_entries($menu)
 		}
 	}
 ?>
-    </div>
-    <div class="headerRight">
-		  <?
-            if ($settings['LogoLink'] != "") echo "<a href='" . $settings['LogoLink'] . "' target='_blank'>";
-		    if ($settings['Logo'] != "") echo "<img src='images/" . $settings['Logo'] . "' class='logo'>";
-		    if ($settings['LogoLink'] != "") echo "</a>";
-            if (isSet($settings['cape-info']) && isSet($settings['cape-info']['vendor']) && isSet($settings['cape-info']['vendor']['image'])) {
-                $landing = $settings['cape-info']['vendor']['url'];
-                if (isSet($settings['cape-info']['vendor']['landingPage'])) {
-                    $landing = $settings['cape-info']['vendor']['landingPage'];
-                }
-                $iurl = $settings['cape-info']['vendor']['image'] . "?sn=" . $settings['cape-info']['serialNumber'] . "&id=" . $settings['cape-info']['id'];
-                $landing = $landing . "?sn=" . $settings['cape-info']['serialNumber'] . "&id=" . $settings['cape-info']['id'];
-                if (isset($settings['cape-info']['cs']) && $settings['cape-info']['cs'] != "") {
-                    $iurl = $iurl . "&cs=" . $settings['cape-info']['cs'];
-                    $landing = $landing . "&cs=" . $settings['cape-info']['cs'];
-                }
-                echo "<a href=\"" . $landing . "\"><img style='max-width:125px; max-height:60px;' src=\"" . $iurl . "\"></a>";
-            }
-          ?>
 
-		</div>
-    <div class="clear"></div>
+    
   </div>
 
-    <ul id="fppMenu" class="sm sm-clean">
-      <li><a>Status/Control</a>
-        <ul>
-          <li><a href="index.php">Status Page</a></li>
-<?
-if (!file_exists("/etc/fpp/desktop")) {
-          echo "<li><a href='networkconfig.php'>Network</a></li>";
-}
-?>
-          <li><a href="multisync.php">MultiSync</a></li>
-          <li><a href="settings.php">FPP Settings</a></li>
-          <li><a href="backup.php">FPP Backup</a></li>
-          <li><a href="proxies.php">Proxy Settings</a></li>
-          <li><a href="events.php">Events</a></li>
-          <li><a href="effects.php">Effects</a></li>
-          <li><a href="testing.php">Display Testing</a></li>
-          <?
-          if (file_exists($settings['co-other'])) {
-            $js = json_decode(file_get_contents($settings['co-other']), true);
-            foreach($js["channelOutputs"] as $key => $val) {
-                if (($val["enabled"] == 1) && ($val["type"] == "HTTPVirtualDisplay")) {
-                echo "<li><a href='virtualdisplaywrapper.php'>Virtual Display</a></li>";
-                }
-            }
-          
-          }
-          ?>
-          
-          <?php list_plugin_entries("status"); ?>
-        </ul>
-      </li>
-      <li><a>Content Setup</a>
-        <ul>
-          <li><a href="uploadfile.php">File Manager</a></li>
-          <li><a href="playlists.php">Playlists</a></li>
-          <li><a href="scheduler.php">Scheduler</a></li>
-          <li><a href="scriptbrowser.php">Script Repository Browser</a></li>
-          <li><a href="plugins.php">Plugin Manager</a></li>
-          <?php list_plugin_entries("content"); ?>
-        </ul>
-      </li>
-      <li><a>Input/Output Setup</a>
-        <ul>
-          <li><a href="channelinputs.php">Channel Inputs</a></li>
-          <li><a href="channeloutputs.php">Channel Outputs</a></li>
-          <li><a href="outputprocessors.php">Output Processors</a></li>
-          <li><a href="pixeloverlaymodels.php">Pixel Overlay Models</a></li>
-          <li><a href="gpio.php">GPIO Inputs</a></li>
-          <?php list_plugin_entries("output"); ?>
-        </ul>
-      </li>
-      <li><a>Help</a>
-        <ul>
-          <li><a href="https://falconchristmas.github.io/FPP_Manual(4.6).pdf" target="_blank">FPP Manual</a></li>
-          <li><a href="http://falconchristmas.com/wiki/index.php/Falcon_FPP" target="_blank">Wiki/Help</a></li>
-          <li><a href="help.php">Help Index</a></li>
-<? if ($settings['uiLevel'] > 0) { ?>
-          <li><a href="apihelp.php">REST API Help</a></li>
-<? } ?>
-          <li><a href="cliHelp.php">fpp &amp; fppmm Usage</a></li>
-          <li><a href="troubleshooting.php">Troubleshooting Commands</a></li>
-          <li><a href="http://<?php echo $_SERVER['SERVER_ADDR'] ?>:4200" target="_new">SSH Shell</a></li>
-          <li><a href="about.php">About</a></li>
-          <li><a href="credits.php">Credits</a></li>
-          <?php list_plugin_entries("help"); ?>
-        </ul>
-      </li>
-    </ul>
-<!--
-  <div id='upgradeFlag'>FPP v1.6 is available for install - <input name="btnUpgrade" onClick="ViewReleaseNotes('1.6');" type="button" class = "buttons" value="Upgrade"></div>
--->
   <div id='restartFlag'><span class='inlineBlock'>Settings have changed. <br class='headerBreak'>FPPD Restart Required</span><span class='inlineBlock'>&nbsp;-&nbsp;</span><span class='inlineBlock'><input name="btnRestartFPPD" type="button" onClick="RestartFPPD();" class = "buttons" value="Restart FPPD">
 <?
   if (basename($_SERVER['PHP_SELF']) == "developer.php")
@@ -239,7 +256,7 @@ function RebuildFPPD() {
     </span>
   </div>
 
-      <div class='helpLinkDiv'><a href='javascript:void();' onClick='DisplayHelp();' class='nonULLink'>&nbsp;Press F1 for help&nbsp;&nbsp;</a></div>
+      <!--<div class='helpLinkDiv'><a href='javascript:void();' onClick='DisplayHelp();' class='nonULLink'>&nbsp;Press F1 for help&nbsp;&nbsp;</a></div>-->
 
 <script language="Javascript">
 function handleKeypress(e) {
