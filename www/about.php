@@ -20,6 +20,11 @@ if (!file_exists("/etc/fpp/config_version") && file_exists("/etc/fpp/rfs_version
 	exec($SUDO . " $fppDir/scripts/upgrade_config");
 }
 
+$lastBoot = exec("uptime -s", $output, $return_val);
+if ( $return_val != 0 )
+    $lastBoot = 'Unknown';
+unset($output);
+
 $os_build = "Unknown";
 if (file_exists("/etc/fpp/rfs_version"))
 {
@@ -84,6 +89,7 @@ function getFileCount($dir)
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <script language="Javascript">
 $(document).ready(function() {
+UpdateVersionInfo();
 $('.default-value').each(function() {
 var default_value = this.value;
 $(this).focus(function() {
@@ -109,10 +115,21 @@ function CloseUpgradeDialog() {
 function UpdateVersionInfo() {
     $.get('fppjson.php?command=getFPPstatus&advancedView=true', function(data) {
         $('#fppVersion').html(data.advancedView.Version);
+        $('#fppdUptime').html(data.uptime);
         $('#osVersion').html(data.advancedView.OSVersion);
         $('#osRelease').html(data.advancedView.OSRelease);
-        $('#localGitVersion').html(data.advancedView.LocalGitVersion);
-        $('#remoteGitVersion').html(data.advancedView.RemoteGitVersion);
+
+        var localVer = data.advancedView.LocalGitVersion + " <a href='changelog.php'>ChangeLog</a>";
+        var remoteVer = data.advancedView.RemoteGitVersion;
+        if ((data.advancedView.RemoteGitVersion != "") &&
+            (data.advancedView.RemoteGitVersion != "Unknown") &&
+            (data.advancedView.RemoteGitVersion != data.advancedView.LocalGitVersion)) {
+            localVer += " <font color='#FF0000'>(Update is available)</font>";
+            remoteVer += " <font color='#FF0000'><a href='javascript:void(0);' onClick='GetGitOriginLog();'>Preview Changes</a></font>";
+        }
+
+        $('#localGitVersion').html(localVer);
+        $('#remoteGitVersion').html(remoteVer);
     });
 }
 
@@ -250,14 +267,16 @@ if (($settings['Variant'] != '') && ($settings['Variant'] != $settings['Platform
         <tr><td>Hardware Serial Number:</td><td><? echo $serialNumber; ?></td></tr>
 <? } ?>
             <tr><td>Kernel Version:</td><td><? echo $kernel_version; ?></td></tr>
+            <tr><td>System Boot Time:</td><td id='lastBoot'><? echo $lastBoot; ?></td></tr>
+            <tr><td>fppd Uptime:</td><td id='fppdUptime'></td></tr>
             <tr><td>Local Git Version:</td><td id='localGitVersion'>
 <?
   echo $git_version;
+  echo " <a href='changelog.php'>ChangeLog</a>";
   if (($git_remote_version != "") &&
       ($git_remote_version != "Unknown") &&
       ($git_version != $git_remote_version))
     echo " <font color='#FF0000'>(Update is available)</font>";
-	echo " <a href='changelog.php'>ChangeLog</a>";
 ?>
                 </td></tr>
             <tr><td>Remote Git Version:</td><td id='remoteGitVersion'>
@@ -273,12 +292,11 @@ if (($settings['Variant'] != '') && ($settings['Variant'] != $settings['Platform
 <?
     if ($settings['uiLevel'] > 0) {
         $upgradeSources = Array();
-        $data = file_get_contents('http://localhost/api/remotes');
-        $arr = json_decode($data, true);
+        $remotes = getKnownFPPSystems();
         
         $IPs = explode("\n",trim(shell_exec("/sbin/ifconfig -a | cut -f1 -d' ' | grep -v ^$ | grep -v lo | grep -v eth0:0 | grep -v usb | grep -v SoftAp | grep -v 'can.' | sed -e 's/://g' | while read iface ; do /sbin/ifconfig \$iface | grep 'inet ' | awk '{print \$2}'; done")));
 
-        foreach ($arr as $host => $desc) {
+        foreach ($remotes as $desc => $host) {
             if ((!in_array($host, $IPs)) && (!preg_match('/^169\.254\./', $host))) {
                 $upgradeSources[$desc] = $host;
             }

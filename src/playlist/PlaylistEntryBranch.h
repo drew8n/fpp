@@ -31,7 +31,7 @@
 
 class PlaylistEntryBranch : public PlaylistEntryBase {
   public:
-	PlaylistEntryBranch(PlaylistEntryBase *parent = NULL);
+	PlaylistEntryBranch(Playlist *playlist, PlaylistEntryBase *parent = NULL);
 	virtual ~PlaylistEntryBranch();
 
 	virtual int  Init(Json::Value &config) override;
@@ -69,6 +69,10 @@ class PlaylistEntryBranch : public PlaylistEntryBase {
     // Loop Number
     int  m_iterationStart;
     int  m_iterationCount;
+
+    // MQTT Topic Message
+    std::string m_mqttTopic;
+    std::string m_mqttMessage;
 
     PlaylistBranchType m_trueNextBranchType;
 	std::string m_trueNextSection;

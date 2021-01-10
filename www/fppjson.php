@@ -115,6 +115,12 @@ function GetSetting()
 	returnJSON($result);
 }
 
+function startsWith( $haystack, $needle ) {
+       $length = strlen( $needle );
+       return substr( $haystack, 0, $length ) === $needle;
+}
+
+
 function SetSetting()
 {
 	global $args, $SUDO;
@@ -127,13 +133,8 @@ function SetSetting()
 
 	WriteSettingToFile($setting, $value);
 
-	if ($setting == "LogLevel") {
-		SendCommand("LogLevel,$value,");
-	} else if ($setting == "LogMask") {
-		$newValue = "";
-		if ($value != "")
-			$newValue = preg_replace("/,/", ";", $value);
-		SendCommand("LogMask,$newValue,");
+	if (startsWith($setting, "LogLevel")) {
+		SendCommand("LogLevel,$setting,$value,");
 	} else if ($setting == "HostName") {
 		$value = preg_replace("/[^-a-zA-Z0-9]/", "", $value);
 		exec(	$SUDO . " sed -i 's/^.*\$/$value/' /etc/hostname ; " .
@@ -346,6 +347,7 @@ function GetFPPStatusJson()
                     curl_setopt($curl2, CURLOPT_FOLLOWLOCATION, true);
                     curl_setopt($curl2, CURLOPT_RETURNTRANSFER, true);
                     curl_setopt($curl2, CURLOPT_CONNECTTIMEOUT_MS, 250);
+                    curl_setopt($curl2, CURLOPT_TIMEOUT_MS, 3000);
                     $request_expert_content = curl_exec($curl2);
                     curl_close($curl2);
                     //check we have valid data

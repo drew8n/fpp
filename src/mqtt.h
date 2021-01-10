@@ -28,7 +28,10 @@
 #include <pthread.h>
 #include <string>
 #include <map>
+#include <mutex>
 #include <functional>
+
+#include "Warnings.h"
 
 #include <jsoncpp/json/json.h>
 
@@ -36,7 +39,7 @@
 
 void * RunMqttPublishThread(void *data);
 
-class MosquittoClient {
+class MosquittoClient : public WarningListener {
   public:
   	MosquittoClient(const std::string &host, const int port, const std::string &topicPrefix);
 	~MosquittoClient();
@@ -53,6 +56,8 @@ class MosquittoClient {
 	void MessageCallback(void *obj, const struct mosquitto_message *message);
     
 	void AddCallback(const std::string &topic, std::function<void(const std::string &topic, const std::string &payload)> &callback);
+	virtual void handleWarnings(std::list<std::string> &warnings);
+
     void RemoveCallback(const std::string &topic);
 	void HandleDisconnect();
 	void HandleConnect();
@@ -60,6 +65,10 @@ class MosquittoClient {
 
 	void PublishStatus();
 	void SetReady();
+
+    void        CacheSetMessage(std::string &topic, std::string &message);
+    std::string CacheGetMessage(std::string &topic);
+    bool        CacheCheckMessage(std::string &topic, std::string &message);
 
 	std::string GetBaseTopic() { return m_baseTopic; }
 
@@ -78,6 +87,9 @@ class MosquittoClient {
 	pthread_t         m_mqtt_publish_t;
     
     std::map<std::string, std::function<void(const std::string &topic, const std::string &payload)>> callbacks;
+
+    std::mutex messageCacheLock;
+    std::map<std::string, std::string> messageCache;
 };
 
 extern MosquittoClient *mqtt;

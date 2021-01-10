@@ -9,7 +9,8 @@
                 "type": "string",
                 "contents": {
                     "Time": "Time",
-                    "Loop Number": "Loop"
+                    "Loop Number": "Loop",
+                    "MQTT Topic Message": "MQTT"
                 },
                 "children": {
                     "Time": [
@@ -20,6 +21,10 @@
                         "loopTest",
                         "iterationStart",
                         "iterationCount"
+                    ],
+                    "MQTT": [
+                        "mqttTopic",
+                        "mqttMessage"
                     ]
                 },
                 "optional": false,
@@ -75,6 +80,22 @@
                 "max": 99,
                 "unit": "loop iterations",
                 "optional": false,
+                "simpleUI": true
+            },
+            "mqttTopic": {
+                "name": "mqttTopic",
+                "description": "MQTT Topic",
+                "type": "string",
+                "placeholder": "MQTT Topic",
+                "optional": true,
+                "simpleUI": true
+            },
+            "mqttMessage": {
+                "name": "mqttMessage",
+                "description": "MQTT Message",
+                "type": "string",
+                "placeholder": "MQTT Message",
+                "optional": true,
                 "simpleUI": true
             },
             "trueNextBranchType": {
@@ -184,6 +205,13 @@
                 "type": "string",
                 "contentListUrl": "api/playlists",
                 "optional": false
+            },
+            "note": {
+                "name": "note",
+                "description": "Note",
+                "type": "string",
+                "optional": true,
+                "simpleUI": false
             }
         }
     },
@@ -252,6 +280,13 @@
                 "description": "Drain Queue",
                 "type": "bool",
                 "optional": false
+            },
+            "note": {
+                "name": "note",
+                "description": "Note",
+                "type": "string",
+                "optional": true,
+                "simpleUI": false
             }
         }
     },
@@ -284,6 +319,13 @@
                 "type": "string",
                 "optional": true,
                 "simpleUI": true
+            },
+            "note": {
+                "name": "note",
+                "description": "Note",
+                "type": "string",
+                "optional": true,
+                "simpleUI": false
             }
         }
     },
@@ -319,6 +361,13 @@
                 "description": "Args",
                 "type": "args",
                 "optional": false
+            },
+            "note": {
+                "name": "note",
+                "description": "Note",
+                "type": "string",
+                "optional": true,
+                "simpleUI": false
             }
         }
     },
@@ -363,6 +412,13 @@
                 "contentListUrl": "api/options/FrameBuffer",
                 "type": "string",
                 "optional": false
+            },
+            "note": {
+                "name": "note",
+                "description": "Note",
+                "type": "string",
+                "optional": true,
+                "simpleUI": false
             }
         }
     },
@@ -404,6 +460,13 @@
                 "type": "string",
                 "contentListUrl": "api/options/PlaylistVideoOutput",
                 "optional": true
+            },
+            "note": {
+                "name": "note",
+                "description": "Note",
+                "type": "string",
+                "optional": true,
+                "simpleUI": false
             }
         }
     },
@@ -425,6 +488,13 @@
                 "description": "Message",
                 "optional": false,
                 "simpleUI": true
+            },
+            "note": {
+                "name": "note",
+                "description": "Note",
+                "type": "string",
+                "optional": true,
+                "simpleUI": false
             }
         }
     },
@@ -443,6 +513,13 @@
                 "unit": "seconds",
                 "optional": false,
                 "simpleUI": true
+            },
+            "note": {
+                "name": "note",
+                "description": "Note",
+                "type": "string",
+                "optional": true,
+                "simpleUI": false
             }
         }
     },
@@ -457,6 +534,13 @@
                 "contentListUrl": "api/playlists",
                 "optional": false,
                 "simpleUI": true
+            },
+            "note": {
+                "name": "note",
+                "description": "Note",
+                "type": "string",
+                "optional": true,
+                "simpleUI": false
             }
         }
     },
@@ -513,6 +597,13 @@
                 "description": "Reverse",
                 "type": "bool",
                 "optional": false
+            },
+            "note": {
+                "name": "note",
+                "description": "Note",
+                "type": "string",
+                "optional": true,
+                "simpleUI": false
             }
         }
     },
@@ -540,6 +631,13 @@
                 "description": "Blocking",
                 "type": "bool",
                 "optional": false
+            },
+            "note": {
+                "name": "note",
+                "description": "Note",
+                "type": "string",
+                "optional": true,
+                "simpleUI": false
             }
         }
     },
@@ -572,6 +670,13 @@
                 "type": "string",
                 "contentListUrl": "api/options/PlaylistVideoOutput",
                 "optional": true
+            },
+            "note": {
+                "name": "note",
+                "description": "Note",
+                "type": "string",
+                "optional": true,
+                "simpleUI": false
             }
         }
     },
@@ -588,6 +693,13 @@
                 "onChange": "SequenceChanged",
                 "optional": false,
                 "simpleUI": true
+            },
+            "note": {
+                "name": "note",
+                "description": "Note",
+                "type": "string",
+                "optional": true,
+                "simpleUI": false
             }
         }
     },
@@ -623,6 +735,13 @@
                 "description": "POST Data",
                 "type": "string",
                 "optional": false
+            },
+            "note": {
+                "name": "note",
+                "description": "Note",
+                "type": "string",
+                "optional": true,
+                "simpleUI": false
             }
         }
     },
@@ -640,6 +759,13 @@
                 "default": 80,
                 "optional": false,
                 "simpleUI": true
+            },
+            "note": {
+                "name": "note",
+                "description": "Note",
+                "type": "string",
+                "optional": true,
+                "simpleUI": false
             }
         }
     }

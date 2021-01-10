@@ -24,10 +24,11 @@
  */
 
 #include "fpp-pch.h"
+#include "mqtt.h"
 #include "PlaylistEntryBranch.h"
 
-PlaylistEntryBranch::PlaylistEntryBranch(PlaylistEntryBase *parent)
-  : PlaylistEntryBase(parent),
+PlaylistEntryBranch::PlaylistEntryBranch(Playlist *playlist, PlaylistEntryBase *parent)
+  : PlaylistEntryBase(playlist, parent),
 	m_sHour(0),
 	m_sMinute(0),
 	m_sSecond(0),
@@ -156,6 +157,12 @@ int PlaylistEntryBranch::Init(Json::Value &config)
     if (config.isMember("iterationCount"))
         m_iterationCount = config["iterationCount"].asInt();
 
+    if (config.isMember("mqttTopic"))
+        m_mqttTopic = config["mqttTopic"].asString();
+
+    if (config.isMember("mqttMessage"))
+        m_mqttMessage = config["mqttMessage"].asString();
+
 	// compInfo is deprecated and should be removed at some point.  The fields
 	// are now parsed from the startTime and endTime string fields.
 	if (config.isMember("compInfo")) {
@@ -240,7 +247,7 @@ int PlaylistEntryBranch::StartPlaying(void)
 
         LogDebug(VB_PLAYLIST, "Now: %02d:%02d:%02d, Start: %02d:%02d:%02d, End: %02d:%02d:%02d, NS: %s, NI: %d\n", now.tm_hour, now.tm_min, now.tm_sec, m_sHour, m_sMinute, m_sSecond, m_eHour, m_eMinute, m_eSecond, m_nextSection.c_str(), m_nextItem);
     } else if (m_branchTest == "Loop") {
-        int curLoop = playlist->GetLoopNumber();
+        int curLoop = m_parentPlaylist->GetLoopNumber();
 
         LogDebug(VB_PLAYLIST, "Current Loop is %d, we want every %d iteration(s) starting at %d\n", curLoop, m_iterationCount, m_iterationStart);
         if ((curLoop >= m_iterationStart) &&
@@ -248,6 +255,12 @@ int PlaylistEntryBranch::StartPlaying(void)
             SetNext(1);
         else
             SetNext(0);
+    } else if (m_branchTest == "MQTT") {
+        if ((mqtt) && (mqtt->CacheCheckMessage(m_mqttTopic, m_mqttMessage))) {
+		    SetNext(1);
+        } else {
+		    SetNext(0);
+        }
     } else {
 		SetNext(0);
 	}
@@ -302,6 +315,9 @@ void PlaylistEntryBranch::Dump(void)
     } else if (m_branchTest == "Loop") {
         LogDebug(VB_PLAYLIST, "Iteration Start   : %d\n", m_iterationStart);
         LogDebug(VB_PLAYLIST, "Iteration Count   : %d\n", m_iterationCount);
+    } else if (m_branchTest == "MQTT") {
+        LogDebug(VB_PLAYLIST, "MQTT Topic        : %s\n", m_mqttTopic.c_str());
+        LogDebug(VB_PLAYLIST, "MQTT Message      : %s\n", m_mqttMessage.c_str());
     }
 
     switch (m_trueNextBranchType) {

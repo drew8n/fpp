@@ -53,14 +53,15 @@ OBJECTS_fpp_so += \
 	NetworkController.o \
  	NetworkMonitor.o \
 	ping.o \
+	Player.o \
 	overlays/PixelOverlay.o \
     overlays/PixelOverlayEffects.o \
 	overlays/PixelOverlayModel.o \
+    overlays/WLEDEffects.o \
 	playlist/Playlist.o \
 	playlist/PlaylistEntryBase.o \
 	playlist/PlaylistEntryBoth.o \
 	playlist/PlaylistEntryBranch.o \
-	playlist/PlaylistEntryChannelTest.o \
 	playlist/PlaylistEntryCommand.o \
 	playlist/PlaylistEntryDynamic.o \
 	playlist/PlaylistEntryEffect.o \
@@ -83,7 +84,7 @@ OBJECTS_fpp_so += \
 	sensors/Sensors.o \
 	Sequence.o \
 	settings.o \
-	SunSet.o \
+	sunset.o \
 	Warnings.o \
     util/GPIOUtils.o \
     util/I2CUtils.o \

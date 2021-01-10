@@ -29,7 +29,7 @@
 /*
  *
  */
-PlaylistEntryBase::PlaylistEntryBase(PlaylistEntryBase *parent)
+PlaylistEntryBase::PlaylistEntryBase(Playlist *playlist, PlaylistEntryBase *parent)
   : m_enabled(1),
 	m_isStarted(0),
 	m_isPlaying(0),
@@ -38,7 +38,8 @@ PlaylistEntryBase::PlaylistEntryBase(PlaylistEntryBase *parent)
 	m_playCount(0),
 	m_isPrepped(0),
 	m_deprecated(0),
-	m_parent(parent)
+	m_parent(parent),
+    m_parentPlaylist(playlist)
 {
     LogDebug(VB_PLAYLIST, "PlaylistEntryBase::PlaylistEntryBase()\n");
 	m_type = "base";
@@ -103,7 +104,7 @@ int PlaylistEntryBase::StartPlaying(void)
 	m_isFinished = 0;
 	m_playCount++;
 
-	if ((logLevel & LOG_DEBUG) && (logMask & VB_PLAYLIST))
+	if (WillLog(LOG_DEBUG, VB_PLAYLIST))
 		Dump();
 
 	return 1;
@@ -218,6 +219,7 @@ Json::Value PlaylistEntryBase::GetConfig(void)
 	Json::Value result = m_config;
 
 	result["type"]       = m_type;
+	result["note"]       = m_note;
 	result["enabled"]    = m_enabled;
 	result["isStarted"]  = m_isStarted;
 	result["isPlaying"]  = m_isPlaying;
